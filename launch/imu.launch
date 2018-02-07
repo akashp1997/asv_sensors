@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+	<node name="imu_get" pkg="asv_sensors" type="imu_comm.py" />
+</launch>
