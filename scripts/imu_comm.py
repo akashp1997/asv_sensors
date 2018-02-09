@@ -4,6 +4,7 @@ import sensor_msgs.msg
 import geometry_msgs.msg
 import serial
 from tf.transformations import euler_from_quaternion as e_q
+from tf.transformations import unit_vector
 from math import radians
 
 class ImuSensor(object):
@@ -25,6 +26,7 @@ class ImuSensor(object):
 		self.port.flush()
 		line = self.port.readline()
 		line = [float(i[i.find("=")+1:]) for i in line[:line.find("*")].split(",")[1:4]]
+		self.imu_data.header.frame_id = "base_link"
 		self.imu_data.linear_acceleration.x = line[0]/100
 		self.imu_data.linear_acceleration.y = line[1]/100
 		self.imu_data.linear_acceleration.z = (line[2]-980)/100
@@ -39,8 +41,8 @@ class ImuSensor(object):
 		yaw = float(self.port.readline().split(",")[1])
 		self.now_rpy = [float(i[i.find("=")+1:]) for i in line[:line.find("*")].split(",")[1:3]]+[yaw]
 		ang = [radians((self.now_rpy[i]-self.last_rpy[i]))*self.rate for i in range(len(self.now_rpy))]
-		rospy.loginfo(ang)
 		self.last_rpy = self.now_rpy
+		self.imu_data.header.stamp = rospy.Time.now()
 
 	def get_quat(self):	
 		self.port.write("$PSPA,QUAT\r\n")
@@ -51,6 +53,7 @@ class ImuSensor(object):
 		self.imu_data.orientation.x = line[1]
 		self.imu_data.orientation.y = line[2]
 		self.imu_data.orientation.z = line[3]
+		rospy.loginfo(self.now_rpy)
 
 	def publish(self):
 		try:

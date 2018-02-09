@@ -7,7 +7,7 @@
 		<remap from="/odom" to="/odom_data" />
 	</node>
 
-  <node name="gps_conv" pkg="gps_common" type="utm_odometry_node" args="_child_frame_id:=base_footprint">
-  </node>
+  <!--<node name="gps_conv" pkg="gps_common" type="utm_odometry_node" args="_child_frame_id:=base_footprint">
+  </node>-->
   <!--<node pkg="nodelet" type="nodelet" name="Plus3" args="navsat_odometry/nodelet" />-->
 </launch>
