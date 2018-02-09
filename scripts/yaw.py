@@ -19,7 +19,9 @@ def publisher():
 	rate = rospy.Rate(100)
 	i = 0
 	while not rospy.is_shutdown():
+		port.flush()
 		heading = float(port.readline().split(",")[1])
+		port.flush()
 		arr = tf.transformations.quaternion_from_euler(0,0,math.radians(heading))
 		imu.header.frame_id = "base_link"
 		imu.header.stamp = rospy.Time().now()
