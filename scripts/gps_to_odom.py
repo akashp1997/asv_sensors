@@ -23,6 +23,10 @@ def listener():
 def callback(data, args):
 	global odom
 	if args=="fix":
+		if data.latitude>84 or data.latitude<-80:
+			data.latitude = 0
+		if abs(data.longitude)>=180:
+			data.longitude = 0
 		arr = utm.from_latlon(data.latitude, data.longitude)
 		odom.pose.pose.position.x = arr[0]
 		odom.pose.pose.position.y = arr[1]

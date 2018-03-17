@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="gps_com" default="/dev/ttyUSB0" />
+
+	<include file="$(find asv_sensors)/launch/gps.launch">
+		<arg name="gps_com" value="$(arg gps_com)" />
+	</include>
+
+	<node name="imu" pkg="asv_sensors" type="imu_comm.py" />
+
+</launch>
