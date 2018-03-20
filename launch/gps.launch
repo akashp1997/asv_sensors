@@ -3,7 +3,7 @@
 	<!-- If permission error comes. Do chmod 777 to /dev/ttyUSBx-->
 	<arg name="gps_com" />
 	<arg default="38400" name="gps_baud" />
-	<node args="_port:=$(arg gps_com) _baud:=$(arg gps_baud) _frame_id:=garmin" name="gps" pkg="nmea_navsat_driver" type="nmea_serial_driver">
+	<node args="_port:=$(arg gps_com) _baud:=$(arg gps_baud) _frame_id:=garmin" name="gps" pkg="nmea_navsat_driver" type="nmea_serial_driver" respawn="true" output="screen">
 	</node>
 
     <node name="gps_conv" pkg="gps_common" type="utm_odometry_node" args="_child_frame_id:=garmin" />

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>asv_sensors</name>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <description>The ROS package for all the sensor streams required for autonomous navigation</description>
 
   <maintainer email="akashp1997@gmail.com">Akash Purandare</maintainer>
@@ -15,5 +15,6 @@
   <exec_depend>nmea_navsat_driver</exec_depend>
   <exec_depend>lms1xx</exec_depend>
   <exec_depend>robot_pose_ekf</exec_depend>
-
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
 </package>

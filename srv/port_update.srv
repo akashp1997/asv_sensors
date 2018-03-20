@@ -1,0 +1,8 @@
+#0 for IMU
+#1 for GPS
+#2 for Camera
+#3 for Arduino
+int8 device_type
+---
+string port_name
+bool found
