@@ -3,6 +3,7 @@
 #2 for Camera
 #3 for Arduino
 int8 device_type
+string last_port
 ---
 string port_name
 bool found
