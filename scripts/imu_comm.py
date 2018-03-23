@@ -1,54 +1,43 @@
 #!/usr/bin/env python
 #Import any external libraries here
 import serial, termios
+import sys
 
 #Import ROS libraries here
 import rospy
 
 #Import ROS messages here
 import sensor_msgs.msg
-class ImuSensor(object):
-	def __init__(self, baud=115200, topic_name="/imu_data", temp_topic="/temperature", rate=100, port_name="/dev/ttyUSB0"):
-		"""Constructor to initiate data members"""
-		self.imu_data = sensor_msgs.msg.Imu()
-		self.temp_data = sensor_msgs.msg.Temperature()
-		self.port = serial.Serial("/dev/ttyUSB0", baud)
-		self.pub = rospy.Publisher(topic_name, sensor_msgs.msg.Imu, queue_size=10)
-		self.temp_pub = rospy.Publisher(temp_topic, sensor_msgs.msg.Temperature, queue_size=10)
-		self.rate = rate
+import asv_sensors.msg
 
-	def publish(self):
-		"""Method to publish messages to ROS"""
-		while not rospy.is_shutdown():
-			self.get_data()
-			self.pub.publish(self.imu_data)
-			self.temp_pub.publish(self.temp_data)
-			rospy.Rate(self.rate).sleep()
+pub = rospy.Publisher("/imu_data", sensor_msgs.msg.Imu, queue_size=10)
+pub_temp = rospy.Publisher("/temperature", sensor_msgs.msg.Temperature, queue_size=10)
 
-	def get_data(self):
-		"""Read data from the serial port and create a ROS Message"""
-		self.port.write("quaternion di. accelp di. gyrop di. temperature di.\r\n")
-		data = self.port.read_until(terminator="OK").strip().split("\r\n")
-		self.imu_data.header.frame_id="base_link"
-		self.imu_data.header.stamp = rospy.Time.now()
-		self.imu_data.orientation.w = float(data[1][18:])
-		self.imu_data.orientation.x = float(data[2][5:])
-		self.imu_data.orientation.y = float(data[3][5:])
-		self.imu_data.orientation.z = float(data[4][5:])
-		self.imu_data.linear_acceleration.x = float(data[7][14:])/100
-		self.imu_data.linear_acceleration.y = float(data[8][5:])/100
-		self.imu_data.linear_acceleration.z = float(data[9][5:])/100
-		self.imu_data.angular_velocity.x = float(data[12][13:])
-		self.imu_data.angular_velocity.y = float(data[13][5:])
-		self.imu_data.angular_velocity.z = float(data[14][5:])
-		self.temp_data.header = self.imu_data.header
-		self.temp_data.temperature = float(data[17][14:])
+def listener():
+	rospy.init_node("imu_parser")
+	rospy.Subscriber("/imu_raw", asv_sensors.msg.Serial, callback)
+	rospy.spin()
 
-try:
-	if __name__=="__main__":
-		rospy.init_node("imu_node")
-		imu = ImuSensor(rate=100)
-		imu.publish()
-except KeyboardInterrupt:
-	self.pub.publish(sensor_msgs.msg.Imu())
-	self.port.close()
+def callback(serial_msg):
+	global pub
+	data = [i for i in serial_msg.data.split("\r\n") if len(i)!=0]
+	msg = sensor_msgs.msg.Imu()
+	msg.header = serial_msg.header
+	#msg.header.stamp.nsecs = int(str(msg.header.stamp.nsecs)[:3]+6*"0")
+	msg.orientation.w = float(data[1][18:])
+	msg.orientation.x = float(data[2][5:])
+	msg.orientation.y = float(data[3][5:])
+	msg.orientation.z = float(data[4][5:])
+	msg.linear_acceleration.x = float(data[5][14:])/100
+	msg.linear_acceleration.y = float(data[6][5:])/100
+	msg.linear_acceleration.z = float(data[7][5:])/100
+	msg.angular_velocity.x = float(data[8][13:])
+	msg.angular_velocity.y = float(data[9][5:])
+	msg.angular_velocity.z = float(data[10][5:])
+	temp_msg = sensor_msgs.msg.Temperature()
+	temp_msg.header = msg.header
+	temp_msg.temperature = float(data[11][14:])
+	pub.publish(msg)
+	pub_temp.publish(temp_msg)
+
+listener()
