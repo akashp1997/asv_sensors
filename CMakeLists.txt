@@ -5,7 +5,6 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   nmea_navsat_driver
   lms1xx
-  robot_pose_ekf
   message_generation
 )
 

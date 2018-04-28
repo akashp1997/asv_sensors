@@ -14,7 +14,6 @@
   <exec_depend>rospy</exec_depend>
   <exec_depend>nmea_navsat_driver</exec_depend>
   <exec_depend>lms1xx</exec_depend>
-  <exec_depend>robot_pose_ekf</exec_depend>
   <build_depend>message_generation</build_depend>
   <exec_depend>message_runtime</exec_depend>
 

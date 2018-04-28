@@ -12,6 +12,8 @@ import time
 
 def talker():
 	rospy.init_node("imu_serial_node")
+	if rospy.has_param("~port"):
+		port_name = rospy.get_param("~port")
 	port_name = sys.argv[1].split("=")[1]
 	port = serial.Serial(port_name, baudrate=115200)
 	pub = rospy.Publisher("/imu_raw", asv_sensors.msg.Serial, queue_size=1000)
