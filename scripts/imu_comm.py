@@ -11,6 +11,7 @@ import tf.transformations
 #Import ROS messages here
 import sensor_msgs.msg
 import asv_sensors.msg
+import numpy as np
 
 pub = rospy.Publisher("/imu_data", sensor_msgs.msg.Imu, queue_size=10)
 pub_temp = rospy.Publisher("/temperature", sensor_msgs.msg.Temperature, queue_size=10)
@@ -53,10 +54,17 @@ def callback(serial_msg):
 	expected_z = 9.81*math.cos(z_error[1])*math.cos(z_error[2])
 	expected_x = 9.81*math.sin(z_error[1])
 	expected_y = 9.81*math.sin(z_error[2])
+	if(np.sign(expected_z)!=np.sign(msg.linear_acceleration.z)):
+		expected_z *= -1
+	if(np.sign(expected_x)!=np.sign(msg.linear_acceleration.x)):
+		expected_x *= -1
+	if(np.sign(expected_y)!=np.sign(msg.linear_acceleration.y)):
+		expected_y *= -1
 	#rospy.loginfo(msg.linear_acceleration.z-expected_z)
-	msg.linear_acceleration.z = float("%.2f" % (msg.linear_acceleration.z-expected_z))
-	msg.linear_acceleration.x = float("%.2f" % (msg.linear_acceleration.x-expected_x))
-	msg.linear_acceleration.y = float("%.2f" % (msg.linear_acceleration.y-expected_y))
+	msg.linear_acceleration.z = float("%f" % (msg.linear_acceleration.z-expected_z))
+	msg.linear_acceleration.x = float("%f" % (msg.linear_acceleration.x-expected_x))
+	msg.linear_acceleration.y = float("%f" % (msg.linear_acceleration.y-expected_y))
+	#rospy.loginfo(("%f %f %f" % (expected_x, expected_y, expected_z)))
 	#res += z_error**2
 	#variance = (res/count)**0.5
 	#count += 1
