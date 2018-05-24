@@ -10,7 +10,7 @@ import rospy
 import std_msgs.msg
 import asv_sensors.msg
 
-
+"""
 class Imu:
 	#Set emulate to True, if there is a need to emulate the sensor.
 	#If emulate is set to false, there is a need to set the parameter for port number
@@ -91,8 +91,8 @@ class ROS_Imu(Imu):
 				msg.header.frame_id = "base_link"				
 				self.publisher.publish()
 
-
 """
+
 def talker():
 	rospy.init_node("imu_serial_node")
 	if rospy.has_param("~port"):
@@ -117,7 +117,7 @@ def talker():
 				lines.append(line)
 
 talker()
-"""
 
-obj = ROS_Imu(emulate=True, data="Hello World")
-obj.get_data()
+
+#obj = ROS_Imu(emulate=True, data="Hello World")
+#obj.get_data()

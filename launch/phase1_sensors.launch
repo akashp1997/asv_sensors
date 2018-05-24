@@ -16,9 +16,4 @@
 	<node name="imu_parser" pkg="asv_sensors" type="imu_comm.py" />
 	<node name="gps_parser" pkg="nmea_navsat_driver" type="nmea_topic_driver" />
 
-	<node name="lms1xx" pkg="lms1xx" type="LMS1xx_node">
-		<param name="host" value="192.168.0.101"/>
-		<param name="frame_id" value="lidar" />
-	</node>
-
 </launch>
