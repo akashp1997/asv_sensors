@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+#Import any external libraries here
+import sys, serial
+
+#Import ROS libraries here
+import rospy
+
+#Import ROS messages here
+import asv_sensors.msg
+
+def talker():
+	rospy.init_node("imu_serial_node")
+	port_name = rospy.get_param("~port", "/dev/ttyUSB0")
+	port = serial.Serial(port_name, baudrate=115200)
+	pub = rospy.Publisher("/imu_raw", asv_sensors.msg.Serial, queue_size=1000)
+	while True:
+		port.write("quaternion di. accelp di. gyrop di. temperature di.\r\n")
+		lines = []
+		while True:
+			line = port.readline()
+			if "OK" in line:
+				msg = asv_sensors.msg.Serial()
+				msg.header.stamp = rospy.Time.now()
+				msg.header.frame_id = "base_link"
+				msg.data = "".join(lines)
+				pub.publish(msg)
+				lines = []
+				break
+			else:
+				lines.append(line)
+try:
+	talker()
+except Exception as exception:
+	rospy.logfatal(exception)
+	quit()

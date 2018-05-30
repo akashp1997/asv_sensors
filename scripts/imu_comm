@@ -28,7 +28,6 @@ def callback(serial_msg):
 	data = [i for i in serial_msg.data.split("\r\n") if len(i)!=0]
 	msg = sensor_msgs.msg.Imu()
 	msg.header = serial_msg.header
-	#msg.header.stamp.nsecs = int(str(msg.header.stamp.nsecs)[:3]+6*"0")
 	quat = [-float(data[1][18:]),-float(data[2][5:]),-float(data[3][5:]),-float(data[4][5:])]
 	yaw,pitch,roll = tf.transformations.euler_from_quaternion(quat)
 	yaw = 2*math.pi-yaw
@@ -61,19 +60,9 @@ def callback(serial_msg):
 		expected_x *= -1
 	if(np.sign(expected_y)!=np.sign(msg.linear_acceleration.y)):
 		expected_y *= -1
-	#rospy.loginfo(msg.linear_acceleration.z-expected_z)
 	msg.linear_acceleration.z = float("%f" % (msg.linear_acceleration.z-expected_z))
 	msg.linear_acceleration.x = float("%f" % (msg.linear_acceleration.x-expected_x))
 	msg.linear_acceleration.y = float("%f" % (msg.linear_acceleration.y-expected_y))
-	#rospy.loginfo(("%f %f %f" % (expected_x, expected_y, expected_z)))
-	#res += z_error**2
-	#variance = (res/count)**0.5
-	#count += 1
-	#rospy.loginfo("%.4f %.4f %.4f" % (x_error, y_error, z_error))
-	#msg.linear_acceleration_covariance[0] = 0.012
-	#msg.linear_acceleration_covariance[4] = msg.linear_acceleration.y
-	#msg.linear_acceleration_covariance[8] = msg.linear_acceleration.z
-	#rospy.loginfo("%.4f %.4f %.4f" % (msg.linear_acceleration.x-expected_x, msg.linear_acceleration.y-expected_y, msg.linear_acceleration.z-expected_z))
 	temp_msg.header = msg.header
 	temp_msg.temperature = float(data[11][14:])
 	pub.publish(msg)
