@@ -38,7 +38,7 @@ def callback(serial_msg):
 	roll = -roll
 	pitch = -pitch
 	quat = tf.transformations.quaternion_from_euler(yaw,pitch,roll)
-	rospy.loginfo("%f %f %f" %(math.degrees(roll), math.degrees(pitch), math.degrees(yaw)))
+	#rospy.loginfo("%f %f %f" %(math.degrees(roll), math.degrees(pitch), math.degrees(yaw)))
 	msg.orientation.w = quat[0]
 	msg.orientation.x = quat[1]
 	msg.orientation.y = quat[2]

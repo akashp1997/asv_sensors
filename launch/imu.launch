@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<launch>
+	<arg name="imu_port" default="/dev/ttyUSB1" />
+
+	<node name="imu_serial" pkg="asv_sensors" type="imu_serial" args="port:=$(arg imu_port)" />
+
+	<node name="imu_parser" pkg="asv_sensors" type="imu_parser" />
+
+	<node name="temperature_warner" pkg="asv_sensors" type="temperature" output="screen" />
+</launch>

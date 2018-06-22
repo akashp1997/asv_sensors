@@ -1,41 +1,18 @@
 #!/usr/bin/env python
-
 #Import any external libraries here
-import serial
+import sys, serial
 
 #Import ROS libraries here
 import rospy
 
 #Import ROS messages here
+import std_msgs.msg
 import asv_sensors.msg
+import time
 
-class IMUSerial(object):
-	def __init__(self, port="/dev/ttyUSB0", topic_name="/imu_raw", queue_size=1000):
-		self.port = serial.Serial(port, baudrate=115200)
-		self.publisher = rospy.Publisher(topic_name, asv_sensors.msg.Serial, queue_size=queue_size)
-
-	def query_data(self):
-		self.port.write("quaternion di. accelp di. gyrop di. temperature di.\r\n")
-		lines = []
-		for i in range(100):
-			line = self.port.readline()
-			if "OK" in line:
-				msg = asv_sensors.msg.Serial()
-				msg.header.stamp = rospy.Time.now()
-				msg.header.frame_id = "base_link"
-				msg.data = "".join(lines)
-				return msg
-			lines.append(line)
-		return asv_sensors.msg.Serial()
-
-	def publish(self):
-		while not rospy.is_shutdown():
-			self.publisher.publish(self.query_data())
-
-"""
 def talker():
 	rospy.init_node("imu_serial_node")
-	port_name = rospy.get_param("~port", "/dev/ttyUSB0")
+	port_name = sys.argv[1].split("=")[1]
 	port = serial.Serial(port_name, baudrate=115200)
 	pub = rospy.Publisher("/imu_raw", asv_sensors.msg.Serial, queue_size=1000)
 	while True:
@@ -43,6 +20,7 @@ def talker():
 		lines = []
 		while True:
 			line = port.readline()
+			#time.sleep(0.001)
 			if "OK" in line:
 				msg = asv_sensors.msg.Serial()
 				msg.header.stamp = rospy.Time.now()
@@ -53,18 +31,9 @@ def talker():
 				break
 			else:
 				lines.append(line)
+
 try:
 	talker()
 except Exception as exception:
 	rospy.logfatal(exception)
-	quit()"""
-
-if __name__=="__main__":
-	try:
-		rospy.init_node("imu_serial_node")
-		port = rospy.get_param("~port", "/dev/ttyUSB0")
-		ser = IMUSerial(port=port)
-		ser.publish()
-	except Exception as exception:
-		rospy.logfatal(exception)
-		quit()
+	quit()

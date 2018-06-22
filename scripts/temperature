@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+
+import rospy
+
+import sensor_msgs.msg
+
+def callback(data):
+	if(data.temperature>50):
+		rospy.loginfo("Temperature at %f Celsius", data.temperature)
+	elif (data.temperature>70):
+		rospy.logwarn("Temperature at %f Celsius", data.temperature)
+	elif (data.temperature>90):
+		rospy.logfatal("Temperature at %f Celsius", data.temperature)
+
+rospy.init_node("temperature_trigger")
+rospy.Subscriber("/temperature", sensor_msgs.msg.Temperature, callback)
+rospy.spin()

@@ -1,4 +1,0 @@
-baud: 38400               #Baudrate for serial comms
-frame_id: "base_link"     #Frame Id of GPS Message
-time_ref_source: ""       #Used in case an external time reference is used(Not to be used)
-useRMC: false             #Use RMC type NMEA messages instead of GGA
